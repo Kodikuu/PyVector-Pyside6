@@ -87,6 +87,14 @@ def update_buffer(buffer: np.array, newdata: int):
     clipped = buffer[length:]
     return np.append(clipped, newdata)
 
+@njit(nogil=True)
+def process_bins(fft_filtered, bands, freq_min, freq_max, sensitivity, samplerate):
+    binsraw = apply_binning(fft_filtered, bands, freq_min, freq_max, samplerate)
+    binsscaled = binsraw / 10
+    binsunclipped = ((10/sensitivity)*np.log10(binsscaled))+1
+
+    return binsunclipped
+
 class audioLevel(QThread):
     def __init__(self, parent, samplerate, buffersize, capturesize, devname=None, attack=1, decay=1):
         QThread.__init__(self, parent)
@@ -119,13 +127,8 @@ class audioLevel(QThread):
         return data.size
     
     def createPoints(self, width, height, originY, bands, sensitivity=35, freq_min=20, freq_max=20000):
-        rawbins = apply_binning(self.fft_filtered, bands, freq_min, freq_max, self.samplerate)
-        if max(rawbins) > 0:
-            scaledbins = rawbins / 10
-            unclippedbins = ((10/sensitivity)*np.log10(scaledbins))+1
-            bins = np.clip(unclippedbins, 0, 1)
-        else:
-            bins = [0 for i in range(bands)]
+        unclippedbins = process_bins(self.fft_filtered, bands, freq_min, freq_max, sensitivity, self.samplerate)
+        bins = np.clip(unclippedbins, 0, 1)
 
         partpoints = [height*val for val in bins]
 
