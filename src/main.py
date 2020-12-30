@@ -27,13 +27,21 @@ class Visualiser(QWidget):
         timer.timeout.connect(self.update)
         timer.start()
     
+    def preparePoints(self):
+        return []
+    
     def paintEvent(self, event: QPaintEvent):
         painter = QPainter(self)
         painter.setPen(QPen(QColor("#00000000")))
         painter.setBrush(QBrush(QColor(*self.colour)))
 
+        points = self.preparePoints()
+
         path = QPainterPath()
         path.moveTo(0, self.scr_height)
+        
+        for point in points:
+            path.lineTo(*point)
         
         path.lineTo(self.scr_width, self.scr_height)
         painter.drawPath(path)
