@@ -86,7 +86,6 @@ class audioLevel(QThread):
 
         self.device = get_device(samplerate, devname)
         self.capture = capture_generator(self.device, capturesize)
-        self.newdata = 0
 
         self.samplerate = samplerate
         self.attack = attack
@@ -98,7 +97,7 @@ class audioLevel(QThread):
 
             if newdata:
                 fft_raw = run_fft(self.buffer)
-                self.fft_filtered = apply_filter(fft_raw, self.fft_filtered, self.newdata, self.samplerate, self.attack, self.decay)
+                self.fft_filtered = apply_filter(fft_raw, self.fft_filtered, newdata, self.samplerate, self.attack, self.decay)
                 self.newdata = 0
     
     def capture(self):
