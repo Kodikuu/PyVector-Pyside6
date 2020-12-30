@@ -24,10 +24,18 @@ class Visualiser(QWidget):
 
         self.resize(self.scr_width, self.scr_height)
         self.colour = colour
+
+        self.step = 0
     
         timer = QTimer(self)
         timer.timeout.connect(self.update)
         timer.start()
+    
+    def update(self):
+        if self.step < self.measure.step:
+            self.step = self.measure.step
+            super().update()
+
     
     def preparePoints(self):
         return self.measure.createPoints(self.scr_width, 180, self.scr_height, 32)
