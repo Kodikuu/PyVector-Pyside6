@@ -9,7 +9,7 @@ from PySide6.QtGui import QPaintEvent, QPainter, QPainterPath, QPen, QBrush, QCo
 import signal
 
 class Visualiser(QWidget):
-    def __init__(self, parent, colour=(255, 255, 255)):
+    def __init__(self, parent, measure, colour=(255, 255, 255)):
         super().__init__()
 
         self.setAttribute(Qt.WA_TranslucentBackground, True)
@@ -30,7 +30,7 @@ class Visualiser(QWidget):
         timer.start()
     
     def preparePoints(self):
-        return []
+        return self.measure.createPoints(self.scr_width, 180, self.scr_height, 32)
     
     def paintEvent(self, event: QPaintEvent):
         painter = QPainter(self)
@@ -56,7 +56,11 @@ def main():
     signal.signal(signal.SIGINT, lambda x, y: QApplication.quit())
     app = QApplication()
 
-    vis = Visualiser(app)
+    # Importing Soundcard before assigning app causes a COM error; RPC_E_CHANGED_MODE
+    from audiolevel import audioLevel
+    visMeasure = audioLevel(app, 48000, 4800, 480, None, 1, 1)
+
+    vis = Visualiser(app, visMeasure)
     vis.show()
 
     app.exec_()
