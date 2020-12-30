@@ -4,6 +4,7 @@ __license__ = "The Unlicense"
 
 from PySide6.QtWidgets import QApplication, QWidget
 from PySide6.QtCore import Qt, QTimer
+from PySide6.QtGui import QPaintEvent, QPainter
 
 import signal
 
@@ -26,6 +27,10 @@ class Visualiser(QWidget):
         timer = QTimer(self)
         timer.timeout.connect(self.update)
         timer.start()
+    
+    def paintEvent(self, event: QPaintEvent):
+        painter = QPainter(self)
+
 
 
 def main():
