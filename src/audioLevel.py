@@ -111,6 +111,6 @@ class audioLevel(QThread):
         bins = np.clip(unclippedbins, 0, 1)
         scaledbins = rawbins / 10
 
-        partpoints = [height*bins for val in bins]
+        partpoints = [height*val for val in bins]
 
         return [[width*pos/(bands-1), originY-partpoints[pos]] for pos in range(bands)]
