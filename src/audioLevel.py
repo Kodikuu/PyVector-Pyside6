@@ -3,6 +3,8 @@ from PySide6.QtCore import QThread
 import numpy as np
 import soundcard as sc
 
+from numba import njit
+
 from math import sqrt, exp, log
 
 
@@ -28,6 +30,7 @@ def run_fft(buffer):
     absolute = np.abs(raw[1:])
     return absolute
 
+@njit(nogil=True)
 def apply_filter(fft_raw, fft_filtered, newsize, samplerate, attack, decay):
     kfft = (exp((-2) / (samplerate/(newsize) * attack * 0.001)),
             exp((-2) / (samplerate/(newsize) * decay * 0.001)))
@@ -41,6 +44,7 @@ def apply_filter(fft_raw, fft_filtered, newsize, samplerate, attack, decay):
 
     return fft_filtered
 
+@njit(nogil=True)
 def apply_binning(fft_filtered, bands, freq_min, freq_max, samplerate):
     df = samplerate / fft_filtered.size
     scalar = 2 / samplerate
@@ -67,6 +71,7 @@ def apply_binning(fft_filtered, bands, freq_min, freq_max, samplerate):
 
     return out
 
+@njit(nogil=True)
 def calculate_bands_freqs(bands, freq_min, freq_max):
     step = (log(freq_max/freq_min) / bands) / log(2)
 
