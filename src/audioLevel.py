@@ -93,14 +93,14 @@ class audioLevel(QThread):
     
     def run(self):
         while not self.exiting:
-            newdata = self.capture()
+            newdata = self.nextCapture()
 
             if newdata:
                 fft_raw = run_fft(self.buffer)
                 self.fft_filtered = apply_filter(fft_raw, self.fft_filtered, newdata, self.samplerate, self.attack, self.decay)
                 self.newdata = 0
     
-    def capture(self):
+    def nextCapture(self):
         data = next(self.capture)
         self.buffer = np.append(self.buffer[data.size:], data)
         return data.size
