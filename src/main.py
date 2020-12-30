@@ -5,6 +5,8 @@ __license__ = "The Unlicense"
 from PySide6.QtWidgets import QApplication, QWidget
 from PySide6.QtCore import *
 
+import signal
+
 class Visualiser(QWidget):
     def __init__(self, parent, taskbar=30):
         super().__init__()
@@ -27,6 +29,7 @@ class Visualiser(QWidget):
 
 
 def main():
+    signal.signal(signal.SIGINT, lambda x, y: QApplication.quit())
     app = QApplication()
 
     vis = Visualiser(app)
