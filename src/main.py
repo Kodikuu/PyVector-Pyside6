@@ -32,6 +32,8 @@ class Visualiser(QWidget):
     
     def paintEvent(self, event: QPaintEvent):
         painter = QPainter(self)
+        
+        painter.setRenderHint(QPainter.Antialiasing)
         painter.setPen(QPen(QColor("#00000000")))
         painter.setBrush(QBrush(QColor(*self.colour)))
 
