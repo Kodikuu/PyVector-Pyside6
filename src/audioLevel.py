@@ -107,9 +107,9 @@ class audioLevel(QThread):
     
     def createPoints(self, width, height, originY, bands, sensitivity=35, freq_min=20, freq_max=20000):
         rawbins = apply_binning(self.fft_filtered, bands, freq_min, freq_max, self.samplerate)
-        scaledbins = binsscaled = rawbins / 10
         unclippedbins = ((10/sensitivity)*np.log10(binsscaled))+1
         bins = np.clip(unclippedbins, 0, 1)
+        scaledbins = rawbins / 10
 
         partpoints = [height*bins for val in bins]
 
