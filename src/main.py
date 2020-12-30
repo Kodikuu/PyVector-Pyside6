@@ -20,6 +20,10 @@ class Visualiser(QWidget):
         self.origin_y = self.scr_height - taskbar
 
         self.resize(self.scr_width, self.scr_height)
+    
+        timer = QTimer(self)
+        timer.timeout.connect(self.update)
+        timer.start()
 
 
 def main():
