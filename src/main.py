@@ -60,6 +60,7 @@ def main():
     from audioLevel import audioLevel
     
     visMeasure = audioLevel(app, 48000, 4800, 480, None, 1, 1)
+    visMeasure.start()
 
     vis = Visualiser(app, visMeasure)
     vis.show()
