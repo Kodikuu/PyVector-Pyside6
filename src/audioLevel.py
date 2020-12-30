@@ -41,6 +41,41 @@ def apply_filter(fft_raw, fft_filtered, newsize, samplerate, attack, decay):
 
     return fft_filtered
 
+def apply_binning(fft_filtered, bands, freq_min, freq_max, samplerate):
+    df = samplerate / fft_filtered.size
+    scalar = 2 / samplerate
+
+    out = np.zeros(bands)
+    bandFreqs = calculate_bands_freqs(bands, freq_min, freq_max)
+
+    iBin = 0
+    iBand = 0
+    f0 = 0.0
+    while iBin < fft_filtered.size and iBand < bands:
+        fLin1 = (iBin+0.5)*df
+        fLog1 = bandFreqs[iBand]
+        x = fft_filtered[iBin]
+
+        if fLin1 <= fLog1:
+            out[iBand] += (fLin1-f0) * x * scalar
+            f0 = fLin1
+            iBin += 1
+        else:
+            out[iBand] += (fLog1-f0) * x * scalar
+            f0 = fLog1
+            iBand += 1
+
+    return out
+
+def calculate_bands_freqs(bands, freq_min, freq_max):
+    step = (log(freq_max/freq_min) / bands) / log(2)
+
+    bandFreq = [freq_min*2**(step/2), ]
+    for i in range(1, bands):
+        bandFreq.append(bandFreq[i-1]*2**step)
+
+    return bandFreq
+
 class audioLevel(QThread):
     def __init__(self, parent, samplerate, buffersize, capturesize, devname=None, attack=1, decay=1):
         QThread.__init__(self, parent)
@@ -59,14 +94,24 @@ class audioLevel(QThread):
     
     def run(self):
         while not self.exiting:
-            self.capture()
+            newdata = self.capture()
 
-            if self.newdata:
+            if newdata:
                 fft_raw = run_fft(self.buffer)
                 self.fft_filtered = apply_filter(fft_raw, self.fft_filtered, self.newdata, self.samplerate, self.attack, self.decay)
                 self.newdata = 0
     
     def capture(self):
         data = next(self.capture)
-        self.newdata += data.size
         self.buffer = np.append(self.buffer[data.size:], data)
+        return data.size
+    
+    def createPoints(self, width, height, originY, bands, sensitivity=35, freq_min=20, freq_max=20000):
+        rawbins = apply_binning(self.fft_filtered, bands, freq_min, freq_max, self.samplerate)
+        scaledbins = binsscaled = rawbins / 10
+        unclippedbins = ((10/sensitivity)*np.log10(binsscaled))+1
+        bins = np.clip(unclippedbins, 0, 1)
+
+        partpoints = [height*bins for val in bins]
+
+        return [[width*pos/(bands-1), originY-partpoints[pos]] for pos in range(bands)]
