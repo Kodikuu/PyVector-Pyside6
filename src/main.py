@@ -30,11 +30,6 @@ class Visualiser(QWidget):
         timer = QTimer(self)
         timer.timeout.connect(self.update)
         timer.start()
-    
-    def update(self):
-        if self.step < self.measure.step:
-            self.step = self.measure.step
-            super().update()
 
     
     def preparePoints(self):

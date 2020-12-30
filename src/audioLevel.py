@@ -83,9 +83,7 @@ def calculate_bands_freqs(bands, freq_min, freq_max):
 
 @njit(nogil=True)
 def update_buffer(buffer: np.array, newdata: int):
-    length = newdata.size
-    clipped = buffer[length:]
-    return np.append(clipped, newdata)
+    return np.append(buffer[newdata.size:], newdata)
 
 @njit(nogil=True)
 def process_bins(fft_filtered, bands, freq_min, freq_max, sensitivity, samplerate):
