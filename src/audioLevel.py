@@ -81,6 +81,12 @@ def calculate_bands_freqs(bands, freq_min, freq_max):
 
     return bandFreq
 
+@njit(nogil=True)
+def update_buffer(buffer: np.array, newdata: int):
+    length = newdata.size
+    clipped = buffer[length:]
+    return np.append(clipped, newdata)
+
 class audioLevel(QThread):
     def __init__(self, parent, samplerate, buffersize, capturesize, devname=None, attack=1, decay=1):
         QThread.__init__(self, parent)
@@ -109,7 +115,7 @@ class audioLevel(QThread):
     
     def nextCapture(self):
         data = next(self.capture)
-        self.buffer = np.append(self.buffer[data.size:], data)
+        self.buffer = update_buffer(self.buffer, data)
         return data.size
     
     def createPoints(self, width, height, originY, bands, sensitivity=35, freq_min=20, freq_max=20000):
