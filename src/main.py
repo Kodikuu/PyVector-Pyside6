@@ -4,12 +4,12 @@ __license__ = "The Unlicense"
 
 from PySide6.QtWidgets import QApplication, QWidget
 from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QPaintEvent, QPainter
+from PySide6.QtGui import QPaintEvent, QPainter, QPen, QBrush, QColor
 
 import signal
 
 class Visualiser(QWidget):
-    def __init__(self, parent, taskbar=30):
+    def __init__(self, parent, taskbar=30, colour=(255, 255, 255)):
         super().__init__()
 
         self.setAttribute(Qt.WA_TranslucentBackground, True)
@@ -20,9 +20,10 @@ class Visualiser(QWidget):
         self.scr_width = self.parent.primaryScreen().size().width()
         self.scr_height = self.parent.primaryScreen().size().height()
 
-        self.origin_y = self.scr_height - taskbar
-
         self.resize(self.scr_width, self.scr_height)
+
+        self.origin_y = self.scr_height - taskbar
+        self.colour = colour
     
         timer = QTimer(self)
         timer.timeout.connect(self.update)
@@ -30,6 +31,8 @@ class Visualiser(QWidget):
     
     def paintEvent(self, event: QPaintEvent):
         painter = QPainter(self)
+        painter.setPen(QPen(QColor("#00000000")))
+        painter.setBrush(QBrush(QColor(*self.colour)))
 
 
 
