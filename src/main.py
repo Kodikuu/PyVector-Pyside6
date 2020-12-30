@@ -9,7 +9,7 @@ from PySide6.QtGui import QPaintEvent, QPainter, QPen, QBrush, QColor
 import signal
 
 class Visualiser(QWidget):
-    def __init__(self, parent, taskbar=30, colour=(255, 255, 255)):
+    def __init__(self, parent, colour=(255, 255, 255)):
         super().__init__()
 
         self.setAttribute(Qt.WA_TranslucentBackground, True)
@@ -17,12 +17,10 @@ class Visualiser(QWidget):
         self.setWindowFlags(Qt.FramelessWindowHint | Qt.Tool)
 
         self.parent = parent
-        self.scr_width = self.parent.primaryScreen().size().width()
-        self.scr_height = self.parent.primaryScreen().size().height()
+        self.scr_width = self.parent.primaryScreen().availableGeometry().height()
+        self.scr_height = self.parent.primaryScreen().availableGeometry().width()
 
         self.resize(self.scr_width, self.scr_height)
-
-        self.origin_y = self.scr_height - taskbar
         self.colour = colour
     
         timer = QTimer(self)
