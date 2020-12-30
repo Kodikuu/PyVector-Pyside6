@@ -4,7 +4,7 @@ __license__ = "The Unlicense"
 
 from PySide6.QtWidgets import QApplication, QWidget
 from PySide6.QtCore import Qt, QTimer
-from PySide6.QtGui import QPaintEvent, QPainter, QPen, QBrush, QColor
+from PySide6.QtGui import QPaintEvent, QPainter, QPainterPath, QPen, QBrush, QColor
 
 import signal
 
@@ -31,6 +31,12 @@ class Visualiser(QWidget):
         painter = QPainter(self)
         painter.setPen(QPen(QColor("#00000000")))
         painter.setBrush(QBrush(QColor(*self.colour)))
+
+        path = QPainterPath()
+        path.moveTo(0, self.scr_height)
+        
+        path.lineTo(self.scr_width, self.scr_height)
+        painter.drawPath(path)
 
 
 
