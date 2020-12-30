@@ -57,7 +57,8 @@ def main():
     app = QApplication()
 
     # Importing Soundcard before assigning app causes a COM error; RPC_E_CHANGED_MODE
-    from audiolevel import audioLevel
+    from audioLevel import audioLevel
+    
     visMeasure = audioLevel(app, 48000, 4800, 480, None, 1, 1)
 
     vis = Visualiser(app, visMeasure)
