@@ -12,6 +12,8 @@ class Visualiser(QWidget):
         self.scr_width = self.parent.primaryScreen().size().width()
         self.scr_height = self.parent.primaryScreen().size().height()
 
+        self.origin_y = self.scr_height - taskbar
+
 
 def main():
     app = QApplication()
