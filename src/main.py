@@ -3,7 +3,7 @@ __version__ = "0.0.1"
 __license__ = "The Unlicense"
 
 from PySide6.QtWidgets import QApplication, QWidget
-from PySide6.QtCore import *
+from PySide6.QtCore import Qt, QTimer
 
 import signal
 
